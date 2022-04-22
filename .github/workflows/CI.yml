@@ -1,0 +1,15 @@
+name: CI
+
+on: push
+
+jobs:
+  valgrind_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: prepare environment
+        run: sudo apt update && sudo apt install build-essential libgtest-dev cmake gcc valgrind
+      - name: build
+        run: cmake . -Bbuild && cmake --build build --target tests
+      - name: valgrind_memcheck
+        run: valgrind --tool=memcheck --leak-check=yes --error-exitcode=1 ./build/tests
